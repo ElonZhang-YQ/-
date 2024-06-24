@@ -8,26 +8,38 @@
 ## 谈谈你对IOC的理解
 
 - IOC就是控制反转
+- *IOC容器实际上就是个map，里面存放各种对象（XML中配置的bean，通过注解标记的对象@Repository，@Service，@Controller，@Component等等），在项目启动的时候会读取配置文件里面的bean节点，根据全限定类名使用反射创建对象放到map里或者扫描注解通过反射创建对象放入到map中。*
+- *后续在代码中需要用到这些对象时，再通过DI（依赖注入，@Autowired或者@Resource等注解）*
+- *在没有引入IOC容器之前，对象A依赖于对象B，那么在A初始化或者运行到某个时间点的时候，需要自己主动创建B或者使用已经创建的对象B。无论是创建还是使用B，控制权都是在A手上。再引入IOC容器之后，A和B失去了直接联系，当A运行到需要B的时候，IOC容器会主动创建一个对象B注入到A需要的地方。*
 - 将创建对象的过程交给Spring工厂进行创建，并且由Spring工厂去控制对象生成的类型，和对象的生命周期。
-- 程序员可以更加专注到其他功能模块的开发中，而不需要分神到对象创建中。
 
 ## 解释一下Spring支持的几种bean的作用域
 
 - singleton，*默认，每个容器中只有一个bean的实例，单例模式由BeanFactory自身来维护。生命周期和SpringIOC容器是一致的（但是在第一次注入时才被创建）*
-- *prototype*
-- *request*
-- *session*
-- *application*
-- *websocket*
-- *global-session*
+- *prototype，为每一个bean请求提供一个实例。在每次注入时都会创建一个新的对象。*
+- *request，bean被定义为在每个HTTP请求中创建一个单例对象，也就是说每个请求中都会复用这一个单例对象*
+- *session，与request类似，确保每个session中有一个bean的实例，在session过期后，bean会随之失效。*
+- *application，bean被定义为在ServletContext的生命周期中复用一个单例对象*
+- *websocket，bean被定义为在WebSocket的生命周期中复用一个单例对象*
+- *global-session，全局作用域，global-session和Portlet应用相关。当应用部署在Portlet容器中工作时，它包含很多portlet。如果想要共用全局的存储变量的话，那么这全局变量需要存储在global-session中。全局作用域与Servlet中session作用域效果相同。*
 
-## Spring事务传输机制
+## Spring事务传播机制
 
-
+- *REQUIRED（Spring默认的事务传播类型）：如果当前没有事务，则自己新建一个事务；如果当前存在事务，则加入这个事务。无论父子方法哪个发生异常回滚，整个事务都会回滚。即使父方法捕捉了一场，也会发生回滚*
+- *SUPPORTS：当前存在事务则加入当前事务；如果没有，就以非事务方法执行。*
+- *MANDATORY：当前存在事务，则加入当前事务；如果当前事务不存在，则抛出异常。*
+- *REQUIRES_NEW：创建一个新事物，如果存在当前事务，则挂起该事务。*
+- *NOT_SUPPORTED：以非事务方式执行，如果当前存在事务，则挂起当前事务。*
+- *NEVER：不使用事务，如果当前事务存在，则抛出异常。*
+- *NESTED：如果当前事务存在，则嵌套事务中执行，否则REQUIRED的操作一样（开启一个事务）。*
 
 ## Spring事务什么时候会失效
 
-
+- *1.发生自调用，类里面使用this调用本类的方法（this通常省略），此时这个this对象不是代理类，而是UserService对象本身。解决方法很简单，把this变成UserService的代理类即可。*
+- *2.方法不是public的，@Transactional只能用于public的方法上，否则事务不会失效，如果要用在非public方法上，可以开启AspectJ代理模式。*
+- *3.数据库不支持事务*
+- *4.没有被Spring管理*
+- *5.异常被吃掉，事务不会回滚（或者抛出的异常没有被定义，默认为RuntimeException）。*
 
 ## Spring中的bean创建的声明周期有哪些步骤？
 
@@ -85,3 +97,19 @@
 
 - 首先加载根目录文件的application.yml
 - 然后是根目录文件的application.xml
+
+
+
+
+
+含量不同，价钱不同
+
+有200多，有100多的，但是药理成分更高
+
+
+
+晒干出来 40多吨，客户要一部分可能还有30吨，11月
+
+价格，含量高卖 200块钱 一公斤，有些180一公斤 含量不同 含量低的100多
+
+秋季结束，能提供差不多30吨
