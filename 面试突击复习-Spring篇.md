@@ -108,23 +108,34 @@
 
 ## 如何理解SpringBoot中的Starter
 
-
+- *如果使用Spring+SpringMVC，此时需要引入mybatis等框架，需要到xml中定义mybatis需要的bean*
+- *starter就是定义一个starter的jar包，写一个`@Configuration`配置类，将这些bean定义在里面，然后在starter包的`META-INF/spring.factories`中写入该配置类，springboot会按照约定来加载该配置类。
+- 开发人员只需要将相应的starter包依赖进引用，进行相应的属性配置（使用默认配置时，不需要配置），就可以直接进行代码开发，使用对应的功能了，比如：`mybatis-spring-boot-starter`，`spring-boot-starter-redis`
 
 ## SpringBoot中常用注解及其底层实现
 
-- @SpringBootApplication
-- @Bean
+- @SpringBootApplication，这个注解标识了一个SpringBoot工程，实际上是另外三个注解的组合
+  - @SpringBootConfiguration，这个注解实际就是一个@Configuration，表示启动类也是一个配置类
+  - @EnableAutoConfiguration，向Spring容器中导入了一个selector，用来加载ClassPath下SpringFactories中所定义的自动配置类，将这些自动加载为配置bean。
+  - @ComponentScan，标识扫描路径，因为默认是没有配置实际扫描路径，所以SpringBoot扫描的路径是启动类所在的当前目录。
+
+- @Bean，用来定义Bean，类似于XML中的<bean>标签。在Spring启动时，会对加了@Bean注解的方法进行解析，将方法的名字作为beanName，并通过执行方法得到bean对象。
 - @Controller,@Service,@Component
 - @Autowired,@Repository
 
 ## SpringBoot是如何启动Tomcat的
 
-
+- 首先，SpringBoot在启动时会先创建一个Spring容器
+- 在创建Spring容器过程中，会利用@ConditionalOnClass技术来判断当前classpath中是否存在Tomcat依赖，如果存在则会生成一个启动Tomcat的Bean
+- Spring容器创建完之后，就会获取启动Tomcat的bean，并创建Tomcat对象，绑定端口等，然后启动Tomcat
 
 ## SpringBoot中配置文件的加载顺序是怎么样的？
 
-- 首先加载根目录文件的application.yml
-- 然后是根目录文件的application.xml
+
+
+## SpringBoot的自动装配机制
+
+
 
 
 
