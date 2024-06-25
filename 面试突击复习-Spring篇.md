@@ -41,34 +41,62 @@
 - *4.没有被Spring管理*
 - *5.异常被吃掉，事务不会回滚（或者抛出的异常没有被定义，默认为RuntimeException）。*
 
-## Spring中的bean创建的声明周期有哪些步骤？
+## Spring中的bean创建的生命周期有哪些步骤？
+
+- *推断构造方法*
+- *实例化*
+- *填充属性，也就是依赖注入*
+- *处理Aware回调*
+- *初始化前，处理@PostConstruct注解*
+- *初始化，处理InitializingBean接口*
+- *初始化后，进行AOP*
+
+## Spring的Bean生命周期
 
 
 
 ## Spring中Bean是线程安全的吗？
 
-
+- *Spring本身并没有针对Bean做线程安全的处理，所以如果Bean是无状态的（scope定义为singleton)，那么Bean则是线程安全的。如果Bean是有状态的，那么Bean不是线程安全的。*
+- *另外，Bean具体是不是线程安全，跟Bean的作用域没关。Bean的作用域只是表示Bean的生命周期范围，对于任何生命周期的Bean都是一个对象，这个对象是不是线程安全的，还是得看Bean对象本身。*
 
 ## ApplicationContext和BeanFactory有什么区别？
 
-
+- *BeanFactory是Spring中非常核心的组件，表示Bean工厂，可以生成Bean，维护Bean。*
+- *而ApplicationContext继承了BeanFactory，所以ApplicationContext拥有BeanFactory所有的特点，也是一个Bean工厂。*
+- *但是ApplicationContext除了继承BeanFactory之外，还继承了其他接口，从而ApplicationContext拥有获取系统环境变量、国际化、事件发布等功能，这些都是BeanFactory所不具备的。*
 
 ## Spring中事务是如何实现的？
 
-
-
-## Spring中什么时候@Transactional会失效？
-
-
+- *1.Spring事务底层是基于数据库事务和AOP机制的*
+- *2.首先对使用了`@Transactional`注解的bean，Spring会创建一个代理对象作为bean。*
+- *3.当调用代理对象的方法时，先会判断该方法上是否加了`@Transactional`注解。*
+- *4.如果加了，那么则利用事务管理器创建一个数据库连接。*
+- *5.并且修改数据库连接的autocommit属性为false，禁止此链接的自动提交，这是实现Spring事务非常重要的一步。*
+- *6.然后执行当前方法，方法中会执行SQL*
+- *7.执行完当前方法后，如果没有出现异常就直接提交事务。*
+- *8.如果出现了异常，并且这个异常是需要回滚的就回滚事务，否则仍然提交事务。*
+- *9.Spring事务的隔离级别对应的就是数据库的隔离级别。*
+- *10.Spring事务的传播机制是Spring事务自己实现的，也是Spring事务中最复杂的。*
+- *11.Spring事务的传播机制是基于数据库来做的，一个数据库连接一个事务，如果传播机制配置为需要新开一个事务，那么实际上就是先建立一个数据库连接，在此新数据库连接上执行SQL。*
 
 ## Spring容器启动流程是怎么样的？
 
-
+- 创建Spring容器时，首先进行扫描，扫描得到所有的BeanDefinition对象，并存在Map中。
+- 从Map中筛选出非懒加载的单例BeanDefinition进行创建Bean，对于多例Bean不需要再启动过程中去进行创建，对于多例Bean会在每次获取Bean是利用BeanDefinition去创建。
+- 利用BeanDefinition创建Bean就是Bean的创建生命周期，这期间包括了合并BeanDefinition、推断构造方法、实例化、属性填充、初始化前、初始化、初始化后等步骤，其中AOP就是发生在初始化后这一步骤中。
+- 单例Bean创建完了之后，Spring会发布一个容器启动事件，此时Spring启动结束。
+- Spring的扫描是通过BeanFactoryPostProcessor来实现的，依赖注入是通过BeanPostProcessor来实现的。
+- Spring在启动过程中还会去处理@Import等注解。
 
 ## Spring用到了哪些设计模式？
 
-- 工厂设计模式，Factory
-- 
+- 工厂设计模式，BeanFactory
+- 监听者模式，ApplicationListener（事件监听机制）
+- 代理模式，AOP使用动态代理
+- 装饰器模式，BeanWrapper（比单纯的Bean对象功能更强大）
+- 适配器模式，ApplicationlistenermethodAdapter（将@EventListener注解的方法适配成ApplicationListener）
+- 构造器模式，BeanDefinitionBuilder（BeanDefinition构造器）
 
 ## Spring MVC工作流程
 
@@ -102,14 +130,3 @@
 
 
 
-含量不同，价钱不同
-
-有200多，有100多的，但是药理成分更高
-
-
-
-晒干出来 40多吨，客户要一部分可能还有30吨，11月
-
-价格，含量高卖 200块钱 一公斤，有些180一公斤 含量不同 含量低的100多
-
-秋季结束，能提供差不多30吨
