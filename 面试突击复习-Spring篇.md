@@ -53,7 +53,15 @@
 
 ## Spring的Bean生命周期
 
-
+- 实例化：为Bean分配空间
+- 设置属性：将当前类以来的Bean属性，进行注入和装配
+- 初始化：
+  - 执行各种通知
+  - 执行初始化的前置方法
+  - 执行初始化方法
+  - 执行初始化的后置方法
+- 使用Bean：在程序中使用Bean对象
+- 销毁Bean：将Bean对象进行销毁操作
 
 ## Spring中Bean是线程安全的吗？
 
@@ -106,7 +114,7 @@
 
 
 
-## 如何理解SpringBoot中的Starter
+## 如何理解SpringBoot中的Starter，SpringBoot的自动装配机制
 
 - *如果使用Spring+SpringMVC，此时需要引入mybatis等框架，需要到xml中定义mybatis需要的bean*
 - *starter就是定义一个starter的jar包，写一个`@Configuration`配置类，将这些bean定义在里面，然后在starter包的`META-INF/spring.factories`中写入该配置类，springboot会按照约定来加载该配置类。
@@ -130,12 +138,6 @@
 - Spring容器创建完之后，就会获取启动Tomcat的bean，并创建Tomcat对象，绑定端口等，然后启动Tomcat
 
 ## SpringBoot中配置文件的加载顺序是怎么样的？
-
-
-
-## SpringBoot的自动装配机制
-
-
 
 
 
