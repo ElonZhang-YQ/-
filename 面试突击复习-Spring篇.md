@@ -141,5 +141,10 @@
 
 
 
+## SpringBoot自动装配
 
+- `Spring Boot`自动配置主要是`@EnableAutoConfiguration`实现的，`@EnableAutoConfiguration`注解导入`AutoConfigurationImportSelector`类
+- 通过`selectImports`方法调用`SpringFactoriesLoader.loadFactoryNames()`扫描所有含有`META-INF/spring.factories`文件的`jar`包
+- 将`spring.factories`文件中`@EnableAutoConfiguration`对应的类注入到`IOC`容器中。
+- 这些属性自动配置到`IOC`之后就无需自己手动配置`bean`了，`Spring Boot`中的`约定大于配置`理念，约定是将需要的配置以约定的方式添加到`IOC`容器中。
 
